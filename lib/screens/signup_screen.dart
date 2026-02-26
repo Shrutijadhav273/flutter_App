@@ -23,21 +23,33 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void registerUser() async {
     if (_formKey.currentState!.validate()) {
-      await dbHelper.insertUser(
-        nameController.text,
-        emailController.text,
-        passwordController.text,
-        selectedGender!,
-      );
+      try {
+        await dbHelper.insertUser(
+          nameController.text.trim(),
+          emailController.text.trim(),
+          passwordController.text.trim(),
+          selectedGender!,
+        );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Registration Successful")),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Registration Successful"),
+            backgroundColor: Colors.green,
+          ),
+        );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Email already registered! Please login."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -58,6 +70,7 @@ class _SignupScreenState extends State<SignupScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               elevation: 15,
+              margin: const EdgeInsets.symmetric(horizontal: 25),
               child: Padding(
                 padding: const EdgeInsets.all(25),
                 child: Form(
@@ -89,8 +102,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         decoration: const InputDecoration(
                             labelText: "Email",
                             border: OutlineInputBorder()),
-                        validator: (value) =>
-                            value!.isEmpty ? "Enter your email" : null,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Enter your email";
+                          }
+                          if (!value.contains("@")) {
+                            return "Enter valid email";
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 15),
 
@@ -106,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             return "Enter password";
                           }
                           if (value.length < 8) {
-                            return "Password must be 8 characters";
+                            return "Password must be at least 8 characters";
                           }
                           return null;
                         },
@@ -158,6 +178,32 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         onPressed: registerUser,
                         child: const Text("Sign Up"),
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      // 🔥 Already Registered Section
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Already Registered? "),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const LoginScreen()),
+                              );
+                            },
+                            child: const Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
