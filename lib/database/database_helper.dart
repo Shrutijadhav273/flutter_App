@@ -15,9 +15,8 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3, // updated version
+      version: 3,
       onCreate: (db, version) async {
-
         // USERS TABLE
         await db.execute('''
           CREATE TABLE users(
@@ -93,8 +92,10 @@ class DatabaseHelper {
     );
 
     if (existing.isNotEmpty) {
-      int id = existing.first['id'];
-      int currentQty = existing.first['quantity'];
+      // Safely cast to int
+      int id = existing.first['id'] as int;
+      int currentQty = existing.first['quantity'] as int;
+
       return await db.update(
         'cart',
         {'quantity': currentQty + quantity},
