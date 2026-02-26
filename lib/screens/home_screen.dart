@@ -16,16 +16,16 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> cartItems = [];
 
   final List<Map<String, String>> groceryItems = [
-    {"name": "Rice", "image": "assets/images/rice.png"},
-    {"name": "Wheat", "image": "assets/images/wheat.png"},
-    {"name": "Sugar", "image": "assets/images/sugar.png"},
-    {"name": "Salt", "image": "assets/images/salt.png"},
-    {"name": "Potato", "image": "assets/images/potato.png"},
-    {"name": "Tomato", "image": "assets/images/tomato.png"},
-    {"name": "Onion", "image": "assets/images/onion.png"},
-    {"name": "Apple", "image": "assets/images/apple.png"},
-    {"name": "Banana", "image": "assets/images/banana.png"},
-    {"name": "Milk", "image": "assets/images/milk.png"},
+    {"name": "Rice", "image": "assets/images/rice1.png"},
+    {"name": "Wheat", "image": "assets/images/Wheat.png"},
+    {"name": "Sugar", "image": "assets/images/Sugar.png"},
+    {"name": "Salt", "image": "assets/images/Salt.png"},
+    {"name": "Potato", "image": "assets/images/Potato.png"},
+    {"name": "Tomato", "image": "assets/images/Tomato.png"},
+    {"name": "Onion", "image": "assets/images/Onion.png"},
+    {"name": "Apple", "image": "assets/images/Apple.png"},
+    {"name": "Banana", "image": "assets/images/Banana.png"},
+    {"name": "Milk", "image": "assets/images/Milk.png"},
   ];
 
   @override
