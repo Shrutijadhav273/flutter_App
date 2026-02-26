@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> cartItems = [];
 
   final List<Map<String, String>> groceryItems = [
-    {"name": "Rice", "image": "assets/images/rice1.jpg"},
+    {"name": "Rice", "image": "assets/images/Rice1.jpg"},
     {"name": "Wheat", "image": "assets/images/wheat.jpg"},
     {"name": "Sugar", "image": "assets/images/Sugar.jpg"},
     {"name": "Potato", "image": "assets/images/Potato.jpg"},
