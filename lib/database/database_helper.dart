@@ -6,85 +6,62 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('app.db');
+    _database = await initDB();
     return _database!;
   }
 
-  Future<Database> _initDB(String fileName) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, fileName);
+  Future<Database> initDB() async {
+    String path = join(await getDatabasesPath(), 'users.db');
 
     return await openDatabase(
       path,
       version: 1,
-      onCreate: _createDB,
+      onCreate: (db, version) async {
+        await db.execute('''
+          CREATE TABLE users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            email TEXT UNIQUE,
+            password TEXT,
+            gender TEXT
+          )
+        ''');
+      },
     );
   }
 
-  Future _createDB(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE,
-        password TEXT
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE items(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT
-      )
-    ''');
+  Future<int> insertUser(
+      String name, String email, String password, String gender) async {
+    final db = await database;
+    return await db.insert(
+      'users',
+      {
+        'name': name,
+        'email': email,
+        'password': password,
+        'gender': gender,
+      },
+    );
   }
 
-  // Signup
-  Future<int> insertUser(String email, String password) async {
+  Future<Map<String, dynamic>?> loginUser(
+      String email, String password) async {
     final db = await database;
-    return await db.insert('users', {
-      'email': email,
-      'password': password,
-    });
-  }
 
-  // Login
-  Future<bool> loginUser(String email, String password) async {
-    final db = await database;
-    final result = await db.query(
+    var result = await db.query(
       'users',
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],
     );
-    return result.isNotEmpty;
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
   }
 
-  // CRUD
-  Future<int> insertItem(String title) async {
+  Future<List<Map<String, dynamic>>> getUsers() async {
     final db = await database;
-    return await db.insert('items', {'title': title});
-  }
-
-  Future<List<Map<String, dynamic>>> getItems() async {
-    final db = await database;
-    return await db.query('items');
-  }
-
-  Future<int> updateItem(int id, String title) async {
-    final db = await database;
-    return await db.update(
-      'items',
-      {'title': title},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<int> deleteItem(int id) async {
-    final db = await database;
-    return await db.delete(
-      'items',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return db.query('users');
   }
 }
