@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import 'login_screen.dart';
 import 'feedback_screen.dart';
+import 'cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,6 +67,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  int get totalCartItems {
+    int total = 0;
+    for (var item in cartItems) {
+      total += item['quantity'] as int;
+    }
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
       appBar: AppBar(
         title: const Text("Grocery Store"),
         flexibleSpace: Container(
@@ -110,6 +120,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+
+      // 🔥 View Cart Floating Button with Badge
+      floatingActionButton: Stack(
+        children: [
+          FloatingActionButton(
+            backgroundColor: Colors.green,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const CartScreen()),
+              ).then((_) => loadCart());
+            },
+            child: const Icon(Icons.shopping_cart),
+          ),
+          if (totalCartItems > 0)
+            Positioned(
+              right: 0,
+              child: CircleAvatar(
+                radius: 10,
+                backgroundColor: Colors.red,
+                child: Text(
+                  totalCartItems.toString(),
+                  style: const TextStyle(
+                      fontSize: 12, color: Colors.white),
+                ),
+              ),
+            ),
+        ],
+      ),
+
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -129,10 +170,9 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (context, index) {
             final item = groceryItems[index];
 
-            final cartItem = cartItems.firstWhere(
+            final cartItem = cartItems.where(
               (element) => element['item'] == item['name'],
-              orElse: () => {},
-            );
+            ).toList();
 
             return Card(
               shape: RoundedRectangleBorder(
@@ -145,7 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 10),
                   Text(item["name"]!,
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
 
                   const SizedBox(height: 10),
 
@@ -161,18 +202,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove),
-                              onPressed: () =>
-                                  decreaseQuantity(
-                                      cartItem['id'],
-                                      cartItem['quantity']),
+                              onPressed: () => decreaseQuantity(
+                                cartItem.first['id'] as int,
+                                cartItem.first['quantity'] as int,
+                              ),
                             ),
-                            Text("${cartItem['quantity']} Kg"),
+                            Text(
+                                "${cartItem.first['quantity']} Kg"),
                             IconButton(
                               icon: const Icon(Icons.add),
-                              onPressed: () =>
-                                  increaseQuantity(
-                                      cartItem['id'],
-                                      cartItem['quantity']),
+                              onPressed: () => increaseQuantity(
+                                cartItem.first['id'] as int,
+                                cartItem.first['quantity'] as int,
+                              ),
                             ),
                           ],
                         )
