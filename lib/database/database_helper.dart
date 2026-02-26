@@ -4,23 +4,21 @@ import 'package:path/path.dart';
 class DatabaseHelper {
   static Database? _database;
 
-  // ================= DATABASE INSTANCE =================
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await initDB();
     return _database!;
   }
 
-  // ================= INITIALIZE DATABASE =================
   Future<Database> initDB() async {
-    String path = join(await getDatabasesPath(), 'users.db');
+    String path = join(await getDatabasesPath(), 'grocery.db');
 
     return await openDatabase(
       path,
-      version: 2, // ⚠️ Increased version (important)
+      version: 3, // updated version
       onCreate: (db, version) async {
 
-        // ================= USERS TABLE =================
+        // USERS TABLE
         await db.execute('''
           CREATE TABLE users(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +29,7 @@ class DatabaseHelper {
           )
         ''');
 
-        // ================= CART TABLE =================
+        // CART TABLE
         await db.execute('''
           CREATE TABLE cart(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,26 +37,29 @@ class DatabaseHelper {
             quantity INTEGER
           )
         ''');
+
+        // FEEDBACK TABLE
+        await db.execute('''
+          CREATE TABLE feedback(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message TEXT
+          )
+        ''');
       },
     );
   }
 
-  // ======================================================
-  // ================= USER METHODS =======================
-  // ======================================================
+  // ================= USERS =================
 
   Future<int> insertUser(
       String name, String email, String password, String gender) async {
     final db = await database;
-    return await db.insert(
-      'users',
-      {
-        'name': name,
-        'email': email,
-        'password': password,
-        'gender': gender,
-      },
-    );
+    return await db.insert('users', {
+      'name': name,
+      'email': email,
+      'password': password,
+      'gender': gender,
+    });
   }
 
   Future<Map<String, dynamic>?> loginUser(
@@ -71,43 +72,46 @@ class DatabaseHelper {
       whereArgs: [email, password],
     );
 
-    if (result.isNotEmpty) {
-      return result.first;
-    }
+    if (result.isNotEmpty) return result.first;
     return null;
   }
 
-  Future<List<Map<String, dynamic>>> getUsers() async {
-    final db = await database;
-    return db.query('users');
-  }
+  // ================= CART =================
 
-  // ======================================================
-  // ================= CART METHODS =======================
-  // ======================================================
-
-  // Get all cart items
   Future<List<Map<String, dynamic>>> getItems() async {
     final db = await database;
-    return await db.query('cart');
+    return db.query('cart');
   }
 
-  // Add new item
   Future<int> addItem(String item, int quantity) async {
     final db = await database;
-    return await db.insert(
+
+    var existing = await db.query(
       'cart',
-      {
-        'item': item,
-        'quantity': quantity,
-      },
+      where: 'item = ?',
+      whereArgs: [item],
     );
+
+    if (existing.isNotEmpty) {
+      int id = existing.first['id'];
+      int currentQty = existing.first['quantity'];
+      return await db.update(
+        'cart',
+        {'quantity': currentQty + quantity},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+
+    return await db.insert('cart', {
+      'item': item,
+      'quantity': quantity,
+    });
   }
 
-  // Update quantity
   Future<int> updateItem(int id, int quantity) async {
     final db = await database;
-    return await db.update(
+    return db.update(
       'cart',
       {'quantity': quantity},
       where: 'id = ?',
@@ -115,13 +119,20 @@ class DatabaseHelper {
     );
   }
 
-  // Delete item
   Future<int> deleteItem(int id) async {
     final db = await database;
-    return await db.delete(
-      'cart',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return db.delete('cart', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ================= FEEDBACK =================
+
+  Future<int> insertFeedback(String message) async {
+    final db = await database;
+    return db.insert('feedback', {'message': message});
+  }
+
+  Future<List<Map<String, dynamic>>> getFeedbacks() async {
+    final db = await database;
+    return db.query('feedback');
   }
 }
