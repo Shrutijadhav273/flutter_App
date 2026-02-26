@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? ElevatedButton(
                           onPressed: () =>
                               addToCart(item["name"]!),
-                          child: const Text("Add 1 Kg"),
+                          child: const Text("Add"),
                         )
                       : Row(
                           mainAxisAlignment:
