@@ -16,16 +16,16 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> cartItems = [];
 
   final List<Map<String, String>> groceryItems = [
-    {"name": "Rice", "image": "https://i.imgur.com/6X4P6bH.png"},
-    {"name": "Wheat", "image": "https://i.imgur.com/5Aqgz7o.png"},
-    {"name": "Sugar", "image": "https://i.imgur.com/3ZQ3Z6V.png"},
-    {"name": "Salt", "image": "https://i.imgur.com/Jp8bF9L.png"},
-    {"name": "Potato", "image": "https://i.imgur.com/BP4y9XG.png"},
-    {"name": "Tomato", "image": "https://i.imgur.com/sR4X8pL.png"},
-    {"name": "Onion", "image": "https://i.imgur.com/lm0Yk3T.png"},
-    {"name": "Apple", "image": "https://i.imgur.com/kXq8w3L.png"},
-    {"name": "Banana", "image": "https://i.imgur.com/Fz8R3Vh.png"},
-    {"name": "Milk", "image": "https://i.imgur.com/3mXk9XG.png"},
+    {"name": "Rice", "image": "assets/images/rice.png"},
+    {"name": "Wheat", "image": "assets/images/wheat.png"},
+    {"name": "Sugar", "image": "assets/images/sugar.png"},
+    {"name": "Salt", "image": "assets/images/salt.png"},
+    {"name": "Potato", "image": "assets/images/potato.png"},
+    {"name": "Tomato", "image": "assets/images/tomato.png"},
+    {"name": "Onion", "image": "assets/images/onion.png"},
+    {"name": "Apple", "image": "assets/images/apple.png"},
+    {"name": "Banana", "image": "assets/images/banana.png"},
+    {"name": "Milk", "image": "assets/images/milk.png"},
   ];
 
   @override
@@ -121,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // 🔥 View Cart Floating Button with Badge
       floatingActionButton: Stack(
         children: [
           FloatingActionButton(
@@ -181,13 +180,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network(item["image"]!, height: 80),
+                  Image.asset(
+                    item["image"]!,
+                    height: 80,
+                  ),
                   const SizedBox(height: 10),
                   Text(item["name"]!,
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold)),
-
                   const SizedBox(height: 10),
 
                   cartItem.isEmpty
@@ -207,8 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 cartItem.first['quantity'] as int,
                               ),
                             ),
-                            Text(
-                                "${cartItem.first['quantity']} Kg"),
+                            Text("${cartItem.first['quantity']} Kg"),
                             IconButton(
                               icon: const Icon(Icons.add),
                               onPressed: () => increaseQuantity(
