@@ -16,16 +16,15 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> cartItems = [];
 
   final List<Map<String, String>> groceryItems = [
-    {"name": "Rice", "image": "assets/images/rice1.png"},
-    {"name": "Wheat", "image": "assets/images/Wheat.png"},
-    {"name": "Sugar", "image": "assets/images/Sugar.png"},
-    {"name": "Salt", "image": "assets/images/Salt.png"},
-    {"name": "Potato", "image": "assets/images/Potato.png"},
-    {"name": "Tomato", "image": "assets/images/Tomato.png"},
-    {"name": "Onion", "image": "assets/images/Onion.png"},
-    {"name": "Apple", "image": "assets/images/Apple.png"},
-    {"name": "Banana", "image": "assets/images/Banana.png"},
-    {"name": "Milk", "image": "assets/images/Milk.png"},
+    {"name": "Rice", "image": "assets/images/rice1.jpg"},
+    {"name": "Wheat", "image": "assets/images/wheat.jpg"},
+    {"name": "Sugar", "image": "assets/images/Sugar.jpg"},
+    {"name": "Potato", "image": "assets/images/Potato.jpg"},
+    {"name": "Tomato", "image": "assets/images/Tomato.jpg"},
+    {"name": "Onion", "image": "assets/images/Onion.jpg"},
+    {"name": "Apple", "image": "assets/images/Apple.jpg"},
+    {"name": "Banana", "image": "assets/images/Banana.jpg"},
+    {"name": "Milk", "image": "assets/images/Milk.jpg"},
   ];
 
   @override
@@ -180,9 +179,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    item["image"]!,
-                    height: 80,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      item["image"]!,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(item["name"]!,
