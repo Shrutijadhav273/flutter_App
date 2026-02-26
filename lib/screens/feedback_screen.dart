@@ -9,14 +9,13 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  final feedbackController = TextEditingController();
   final nameController = TextEditingController();
-
+  final messageController = TextEditingController();
   final DatabaseHelper dbHelper = DatabaseHelper();
 
   void submitFeedback() async {
     if (nameController.text.isEmpty ||
-        feedbackController.text.isEmpty) {
+        messageController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all fields")),
       );
@@ -25,7 +24,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     await dbHelper.insertFeedback(
       nameController.text,
-      feedbackController.text,
+      messageController.text,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -33,7 +32,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
 
     nameController.clear();
-    feedbackController.clear();
+    messageController.clear();
   }
 
   @override
@@ -57,55 +56,58 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "We Value Your Feedback",
-                    style: TextStyle(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "We Value Your Feedback",
+                      style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: "Your Name",
-                      border: OutlineInputBorder(),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
 
-                  const SizedBox(height: 15),
-
-                  TextField(
-                    controller: feedbackController,
-                    maxLines: 4,
-                    decoration: const InputDecoration(
-                      labelText: "Write your feedback",
-                      border: OutlineInputBorder(),
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: "Your Name",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 15),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: submitFeedback,
-                      child: const Text("Submit"),
+                    TextField(
+                      controller: messageController,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: "Your Feedback",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 20),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: submitFeedback,
+                        child: const Text("Submit"),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
