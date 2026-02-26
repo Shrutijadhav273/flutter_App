@@ -15,7 +15,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4, // 🔥 UPDATED VERSION
       onCreate: (db, version) async {
         // USERS TABLE
         await db.execute('''
@@ -37,10 +37,11 @@ class DatabaseHelper {
           )
         ''');
 
-        // FEEDBACK TABLE
+        // FEEDBACK TABLE (UPDATED)
         await db.execute('''
           CREATE TABLE feedback(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
             message TEXT
           )
         ''');
@@ -92,7 +93,6 @@ class DatabaseHelper {
     );
 
     if (existing.isNotEmpty) {
-      // Safely cast to int
       int id = existing.first['id'] as int;
       int currentQty = existing.first['quantity'] as int;
 
@@ -127,9 +127,12 @@ class DatabaseHelper {
 
   // ================= FEEDBACK =================
 
-  Future<int> insertFeedback(String message) async {
+  Future<int> insertFeedback(String name, String message) async {
     final db = await database;
-    return db.insert('feedback', {'message': message});
+    return db.insert('feedback', {
+      'name': name,
+      'message': message,
+    });
   }
 
   Future<List<Map<String, dynamic>>> getFeedbacks() async {
